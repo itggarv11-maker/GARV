@@ -54,45 +54,28 @@
         50% { transform: scale(1.2); opacity: 1; }
       }
 
-      /* Homepage Blob Animations */
-      @keyframes move-blob-1 {
-        0% { transform: scale(1) translate(0, 0); }
-        50% { transform: scale(1.2) translate(100px, -80px); }
-        100% { transform: scale(1) translate(0, 0); }
-      }
-      @keyframes move-blob-2 {
-        0% { transform: scale(1) translate(0, 0); }
-        50% { transform: scale(1.1) translate(-100px, 80px); }
-        100% { transform: scale(1) translate(0, 0); }
-      }
-      
-      .bg-lightblue-gradient {
-        background-color: #f0f9ff;
-        background-image: linear-gradient(145deg, #e0f2fe 0%, #bae6fd 100%);
-      }
-
       @keyframes ken-burns {
-        0% { transform: scale(1.05) translate(-1%, 1%); }
-        100% { transform: scale(1.2) translate(2%, -1%); }
+        0% { transform: scale(1) translate(0, 0); }
+        100% { transform: scale(1.1) translate(1%, 1%); }
       }
       .ken-burns-effect {
-          animation: ken-burns 15s ease-in-out alternate-reverse infinite;
+          animation: ken-burns 20s ease-in-out alternate-reverse infinite;
       }
     </style>
   <script type="importmap">
 {
   "imports": {
-    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
-    "react/": "https://esm.sh/react@^19.2.3/",
     "react": "https://esm.sh/react@^19.2.3",
-    "reactflow": "https://esm.sh/reactflow@^11.11.4",
-    "jspdf": "https://esm.sh/jspdf@^4.0.0",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
     "pdfjs-dist": "https://esm.sh/pdfjs-dist@^5.4.530",
-    "html2canvas": "https://esm.sh/html2canvas@^1.4.1",
     "mammoth": "https://esm.sh/mammoth@^1.11.0",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
-    "vite": "https://esm.sh/vite@^7.3.1"
+    "jspdf": "https://esm.sh/jspdf@^4.0.0",
+    "html2canvas": "https://esm.sh/html2canvas@^1.4.1",
+    "reactflow": "https://esm.sh/reactflow@^11.11.4",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
 }
 </script>
@@ -100,7 +83,6 @@
   <body class="bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 text-slate-800 antialiased">
     <div id="root"></div>
     <script>
-      // Polyfill `process` immediately before the app loads
       if (typeof window.process === 'undefined') {
         window.process = { env: {} };
       }
