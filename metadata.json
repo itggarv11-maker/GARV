@@ -1,9 +1,4 @@
 {
-  "requestFramePermissions": [
-    "camera",
-    "microphone"
-  ],
   "name": "NO EDSITS OF SBAI",
-  "description": "",
-  "prompt": ""
+  "description": ""
 }

@@ -1,20 +1,13 @@
-
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { 
-    QuizQuestion, Subject, ClassLevel, WrittenFeedback, QuestionPaper, GradedPaper, 
-    Flashcard, QuizDifficulty, MindMapNode, StudyPlan, 
-    CareerInfo, VisualExplanationScene, DebateTurn, DebateScorecard, GameLevel
+    ClassLevel, Subject, VisualExplanationScene
 } from "../types";
-import { auth as firebaseAuth } from "./firebase";
 
 const API_KEY = process.env.API_KEY;
 const ai = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
 
-const STUBRO_PERSONALITY_PROMPT = `You are StuBro AI, a friendly, fun, and sharp AI tutor for Indian students (Class 6-12).
-Explain complex things simply. Support students with motivation and exam tips. Use emojis. 😊`;
-
 const checkAiService = () => {
-    if (!ai) throw new Error("Gemini AI service not configured.");
+    if (!ai) throw new Error("Gemini AI service not configured. Check VITE_API_KEY environment variable.");
 };
 
 const withTimeout = <T>(promise: Promise<T>, ms: number, context: string): Promise<T> => {
@@ -24,56 +17,57 @@ const withTimeout = <T>(promise: Promise<T>, ms: number, context: string): Promi
     });
 };
 
-const summaryVideoSchema = {
+const demoVideoSchema = {
     type: Type.ARRAY,
-    description: "An array of 5-6 scenes for a high-quality chapter summary video.",
+    description: "An array of 7-8 scenes for a professional 4-minute summary video.",
     items: {
         type: Type.OBJECT,
         properties: {
             narration: { 
                 type: Type.STRING, 
-                description: "A detailed, 3-4 sentence paragraph of narration explaining this part of the chapter in depth." 
+                description: "A VERY LONG, deeply detailed educational narration (at least 100-120 words). Explain concepts slowly and thoroughly to ensure the demo feels like a full lesson." 
             },
             image_prompt: { 
                 type: Type.STRING, 
-                description: "A vivid, educational image prompt. Style: 'Cinematic digital art, 4k, educational illustration, vibrant'." 
+                description: "A high-quality 4K educational illustration prompt. Style: 'Cinematic digital art, professional educational poster, vibrant colors, clear focal point'." 
             },
         },
         required: ["narration", "image_prompt"]
     }
 };
 
-export const generateFullChapterSummaryVideo = async (sourceText: string, language: string, classLevel: ClassLevel): Promise<VisualExplanationScene[]> => {
+export const generateSingleDemoVideo = async (sourceText: string, language: string, classLevel: ClassLevel): Promise<VisualExplanationScene[]> => {
     checkAiService();
-    const prompt = `You are creating a 3-minute demo summary video for a ${classLevel} student.
-    Based on the provided text, create exactly 5 or 6 scenes that summarize the ENTIRE chapter.
-    Each scene must have a LONG, detailed narration (3-4 sentences) that explains the concepts thoroughly.
-    The tone should be like a helpful tutor.
+    const prompt = `You are a world-class educational content creator. Create a 4-minute chapter summary DEMO for a ${classLevel} student.
+    Task: Distill the provided text into exactly 7 or 8 scenes.
     
-    Language: ${language === 'hi' ? 'Hinglish (Hindi in English script)' : 'Clear English'}.
+    CRITICAL: Each scene MUST have a very lengthy narration (minimum 100 words per scene). Speak like a patient tutor explaining deep details. This is necessary to reach a 4-minute video duration.
+    
+    Language: ${language === 'hi' ? 'Hinglish (Hindi written in English alphabet)' : 'Professional Academic English'}.
 
-    ---CHAPTER TEXT---
+    ---CHAPTER SOURCE---
     ${sourceText}
-    ---END TEXT---`;
+    ---END SOURCE---`;
     
     const response: GenerateContentResponse = await withTimeout(ai!.models.generateContent({
         model: "gemini-3-flash-preview",
         contents: prompt,
         config: { 
             responseMimeType: "application/json", 
-            responseSchema: summaryVideoSchema 
+            responseSchema: demoVideoSchema 
         }
-    }), 180000, `Video Script Generation`);
+    }), 240000, `Demo Video Creation`);
     
     const sceneBlueprints = JSON.parse(response.text);
     const successfulScenes: VisualExplanationScene[] = [];
 
+    // Process images sequentially to ensure stability
     for (const blueprint of sceneBlueprints) {
         try {
             const imageResponse = await withTimeout(ai!.models.generateContent({
                 model: 'gemini-2.5-flash-image',
                 contents: [{ text: blueprint.image_prompt }],
-            }), 60000, 'Image Generation');
+            }), 70000, 'Image Illustration');
             
             const part = imageResponse.candidates?.[0]?.content?.parts.find(p => p.inlineData);
             if (part?.inlineData) {
@@ -83,28 +77,30 @@ export const generateFullChapterSummaryVideo = async (sourceText: string, langua
                  });
             }
         } catch (imgErr) {
-            console.error("Image gen failed for a scene, skipping.", imgErr);
+            console.error("Image gen failed for one scene, skipping to keep the demo moving...", imgErr);
         }
     }
     
-    if (successfulScenes.length === 0) throw new Error("Failed to generate video scenes.");
+    if (successfulScenes.length < 3) throw new Error("Could not generate enough scenes for the demo video. Please try again.");
     return successfulScenes;
 };
 
-// Re-exporting other necessary functions (simplified for this change)
 export const fetchChapterContent = async (classLevel: string, subject: string, info: string, details: string): Promise<string> => {
     checkAiService();
     const response = await ai!.models.generateContent({
         model: 'gemini-3-flash-preview',
-        contents: `Find and explain the chapter: ${info} for ${subject}, ${classLevel}. Details: ${details}`,
+        contents: `Provide a massive, detailed, 2000-word explanation of the chapter: ${info} for ${subject}, ${classLevel}. Include all core definitions and examples.`,
         config: { tools: [{ googleSearch: {} }] }
     });
     return response.text;
 };
 
-export const createChatSession = (subject: string, classLevel: string, text: string) => {
+export const createChatSession = (subject: Subject, classLevel: string, text: string) => {
     checkAiService();
-    return ai!.chats.create({ model: 'gemini-3-flash-preview', config: { systemInstruction: STUBRO_PERSONALITY_PROMPT } });
+    return ai!.chats.create({ 
+        model: 'gemini-3-flash-preview',
+        config: {
+            systemInstruction: `You are StuBro AI, a tutor for ${classLevel}. Use this text as your base knowledge: ${text.substring(0, 1000)}`
+        }
+    });
 };
-
-// ... other services truncated for brevity, assume they remain functional but pointing to gemini-3-flash-preview ...
