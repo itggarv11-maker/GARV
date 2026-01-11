@@ -4,59 +4,99 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>StuBro AI</title>
+    <title>StuBro AI | Your Smart Study Buddy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://esm.sh/reactflow@11.11.4/dist/style.css">
     
     <style>
+      :root {
+        --accent-violet: #7C3AED;
+        --accent-pink: #EC4899;
+        --bg-indigo: #4F46E5;
+      }
       body {
-        font-family: 'Poppins', sans-serif;
-        --accent-violet: #7B61FF;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        overflow-x: hidden;
       }
-      .hero-3d-effect {
-        transform-style: preserve-3d;
-        will-change: transform;
-        transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      .font-heading {
+        font-family: 'Space Grotesk', sans-serif;
       }
-      .pulsing-loader div {
-        animation: pulse-animation 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+
+      /* Tech Grid Background */
+      .tech-grid {
+        background-image: 
+          linear-gradient(to right, rgba(124, 58, 237, 0.05) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(124, 58, 237, 0.05) 1px, transparent 1px);
+        background-size: 40px 40px;
       }
-      @keyframes pulse-animation {
-        0%, 100% { transform: scale(0.8); opacity: 0.5; }
-        50% { transform: scale(1.2); opacity: 1; }
+
+      /* Animated Glowing Orbs */
+      .orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        z-index: -1;
+        opacity: 0.4;
+        animation: float-orb 20s infinite alternate;
       }
-      @keyframes ken-burns {
-        0% { transform: scale(1) translate(0, 0); }
-        100% { transform: scale(1.1) translate(1%, 1%); }
+      @keyframes float-orb {
+        0% { transform: translate(0, 0) scale(1); }
+        100% { transform: translate(100px, 50px) scale(1.2); }
       }
-      .ken-burns-effect {
-          animation: ken-burns 20s ease-in-out alternate-reverse infinite;
+
+      /* Floating Animation */
+      .animate-float {
+        animation: floating 3s ease-in-out infinite;
+      }
+      @keyframes floating {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+      }
+
+      /* Smooth Text Gradient */
+      .text-glow {
+        text-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
       }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
-    "vite": "https://esm.sh/vite@^7.3.1",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/"
-  }
-}
-</script>
-</head>
-  <body class="bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 text-slate-800 antialiased">
-    <div id="root"></div>
-    <script>
-      // Polyfill for process.env to ensure the Gemini API key is accessible
-      if (typeof window.process === 'undefined') {
-        window.process = { env: {} };
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@19.0.0",
+        "react-dom": "https://esm.sh/react-dom@19.0.0",
+        "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+        "react-router-dom": "https://esm.sh/react-router-dom@7.1.0?external=react,react-dom",
+        "@google/genai": "https://esm.sh/@google/genai@0.2.1",
+        "html2canvas": "https://esm.sh/html2canvas@^1.4.1",
+        "pdfjs-dist": "https://esm.sh/pdfjs-dist@4.5.136",
+        "reactflow": "https://esm.sh/reactflow@^11.11.4",
+        "jspdf": "https://esm.sh/jspdf@^3.0.1",
+        "firebase/app": "https://esm.sh/firebase@10.12.3/app",
+        "firebase/auth": "https://esm.sh/firebase@10.12.3/auth",
+        "mammoth": "https://esm.sh/mammoth@1.8.0"
       }
+    }
     </script>
-    <script type="module" src="/src/index.tsx"></script>
+  </head>
+  <body class="bg-slate-50 text-slate-900 antialiased tech-grid">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
