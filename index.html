@@ -52,7 +52,7 @@
   <body class="bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 text-slate-800 antialiased">
     <div id="root"></div>
     <script>
-      // Polyfill for process.env
+      // Polyfill for process.env to ensure the Gemini API key is accessible
       if (typeof window.process === 'undefined') {
         window.process = { env: {} };
       }

@@ -8,12 +8,11 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
+    emptyOutDir: true,
     rollupOptions: {
       input: {
         main: './index.html',
       },
     },
   },
-  // Removed the server configuration block because 'historyApiFallback' is not a valid property.
-  // Vite handles SPA history fallback automatically when appType is 'spa' (default).
 })
